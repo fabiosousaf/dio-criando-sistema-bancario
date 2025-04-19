@@ -18,3 +18,11 @@ O sistema deve permitir realizar 3 saques diários com limite máximo de R$ 500,
 Essa operação deve listar todos os depósitos e saques realizados na conta. No fim da listagem deve ser exibido o saldo atual da conta. Se o extrato estiver em branco, exibir a mensagem: Não foram realizadas movimentações.
 Os valores devem ser exibidos utilizando o formato R$ xxx.xx, exemplo:
 1500.45 = R$ 1500.45
+
+## Melhorias Parte 02: Implementando funcionalidades de Data/Hora
+
+Com os novos conhecimentos adquiridos sobre data e hora, você foi encarregado de implementar as seguintes funcionalidades no sistema:
+Estabelecer um limite de 10 transações diárias para uma conta
+Se o usuário tentar fazer uma transação após atingir o limite, deve ser informado que ele excedeu o número de transações permitidas para aquele dia.
+Mostre no extrato, a data e hora de todas as transações.
+
