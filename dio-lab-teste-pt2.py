@@ -1,6 +1,24 @@
 # "*" obriga o uso de argumentos nomeados (keyword only).
 # Verifica se o valor excede saldo, limite ou número de saques.
 # Se tudo estiver certo, atualiza saldo, extrato e numero_saques.
+import textwrap
+
+
+def menu ():
+    menu = """\n
+
+    ================= MENU ===================
+    [d] \t Depositar
+    [s] \t Sacar
+    [e] \t Extrato
+    [q] \t Sair
+    [nu] \t Novo usuário
+    [nc] \t Nova conta
+    [lc] \t Listar contas
+
+    => """
+
+    return input(textwrap.dedent(menu)) # O método textwrap.dedent() remove a indentação do texto, facilitando a leitura e manutenção do código.
 
 def sacar (*, saldo, valor, extrato, limite, numero_saques, limite_saques):
     excedeu_saldo = valor > saldo
@@ -20,7 +38,8 @@ def sacar (*, saldo, valor, extrato, limite, numero_saques, limite_saques):
     elif valor > 0:
         saldo -= valor
         extrato += f"Saque: R$ {valor:.2f}\n"
-        numero_saques += 1 
+        numero_saques += 1
+        print("\nSaque realizado com sucesso!")
 
     else:
         print("Operação falhou! O valor informado é inválido.")
@@ -35,6 +54,7 @@ def depositar(saldo, valor, extrato, /):
     if valor > 0:
         saldo += valor
         extrato += f"Depósito: R$ {valor:.2f}\n"
+        print("\n Depósito realizado com sucesso!")
 
     else:
         print("Operação falhou! O valor informado é invalido.")
@@ -48,15 +68,14 @@ def exibir_extrato(saldo, /, *, extrato):
     print("\n================ EXTRATO ================") # Imprime um cabeçalho bonitinho para separar visualmente o extrato
     print("Não foram realizadas movimentações. " if not extrato else extrato) # Se extrato estiver vazio (""), imprime: "Não foram realizadas movimentações. Caso contrário, imprime o conteúdo da variável extrato, que contém o histórico de depósitos e saques." 
     print(f"\nSaldo: R$ {saldo:.2f}")
-    print("===========================================")
+    print("==========================================")
 
 # Solicita nome, CPF, nascimento e endereço.
 # Usa filtrar_usuario() para evitar CPFs duplicados.
 # Adiciona o novo usuário à lista.
 
-def criar_usuarios(usuarios):
+def criar_usuario(usuarios):
     cpf = input("Informe o CPF (somente números): ")
-    cpf = ' '.join(filter(str.isdigit, cpf)) # Remove caracteres não numéricos do CPF. #''.join(...) junta tudo de volta em uma única string.
     usuario = filtrar_usuario(cpf, usuarios) # "filtrar_usuario" é uma função que verifica se o CPF já existe na lista de usuários.	
 
     if usuario:
@@ -67,7 +86,7 @@ def criar_usuarios(usuarios):
     nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
     endereco = input("Informe o endereço (logradouro, número - bairro - cidade/UF): ")
 
-    usuarios.append ({"nome": nome,"nascimento": nascimento, "cpf": cpf, "endereco": endereco}) # Adiciona o novo usuário à lista de usuários.
+    usuarios.append({"nome": nome,"nascimento": nascimento, "cpf": cpf, "endereco": endereco}) # Adiciona o novo usuário à lista de usuários.
     print("Usuário criado com sucesso!")
 
 # Função auxiliar para buscar um usuário pelo CPF.
@@ -83,8 +102,8 @@ def filtrar_usuario(cpf, usuarios):
 # Se bater: O usuario (ou seja, o dicionário inteiro daquela pessoa) é adicionado na nova lista usuarios_filtrados.
 
 def criar_conta(agencia, numero_conta, usuarios):
-    cpf = input("Informe o CPF do usuário:")
-    usuarios = filtrar_usuario(cpf,usuarios)
+    cpf = input("Informe o CPF do usuário: ")
+    usuario = filtrar_usuario(cpf,usuarios)
 
     if usuario:
         print("Conta criada com sucesso!")
@@ -100,67 +119,65 @@ def criar_conta(agencia, numero_conta, usuarios):
 
 def listar_contas(contas):
     for conta in contas:
-        print(f"\nAgência: {conta['agencia']}")
-        print(f"C/C: {conta['numero_conta']}")
-        print(f"Titular: {conta['usuario']['nome']}")
+        linha = f"""\
+        Agência:\t {conta['agencia']}
+        C/C:\t {conta['numero_conta']}
+        Titular:\t {conta['usuario']['nome']}
+    """
+        print("=" * 100)
+        print(textwrap.dedent(linha)) # O método textwrap.dedent() remove a indentação do texto, facilitando a leitura e manutenção do código.
 
-menu = """
-
-[d] Depositar
-[s] Sacar
-[e] Extrato
-[q] Sair
-[nu] Novo usuário
-[nc] Nova conta
-[lc] Listar contas
-
-=> """
-
-saldo = 0
-limite = 500
-extrato = ""
-numero_saques = 0
-LIMITE_SAQUES = 3
-usuarios = []
-contas = []
+def main():
+    
+    LIMITE_SAQUES = 3
+    AGENCIA = "0001"
+    
+    saldo = 0
+    limite = 500
+    extrato = ""
+    numero_saques = 0
+    usuarios = []
+    contas = []
 
 
-while True:
+    while True:
+        opcao = menu()
 
-    opcao = input(menu)
+        if opcao == "d":
+            valor = float(input("Informe o valor do depósito: "))
+            saldo, extrato = depositar(saldo, valor, extrato)
 
-    if opcao == "d":
-        valor = float(input("Informe o valor do depósito: "))
-        saldo, extrato = depositar(saldo, valor, extrato)
+        elif opcao == "s":
+            valor = float(input("Informe o valor do saque: "))
+            saldo, extrato, numero_saques = sacar(
+                saldo=saldo,
+                valor=valor,
+                extrato=extrato,
+                limite=limite,
+                numero_saques=numero_saques,
+                limite_saques=LIMITE_SAQUES
+            )
 
-    elif opcao == "s":
-        valor = float(input("Informe o valor do saque: "))
-        saldo, extrato, numero_saques = sacar(
-            saldo = saldo,
-            valor = valor,
-            extrato = extrato,
-            limite = limite,
-            numero_saques = numero_saques,
-            limite_saques = LIMITE_SAQUES
-        )
+        elif opcao == "e":
+            exibir_extrato(saldo, extrato=extrato)
 
-    elif opcao == "e":
-        exibir_extrato(saldo, extrato=extrato)
+        elif opcao == "nu":
+            criar_usuario(usuarios)
 
-    elif opcao == "nu":
-        criar_usuarios(usuarios)
+        elif opcao == "nc":
+            numero_conta = len(contas) + 1
+            conta = criar_conta(AGENCIA, numero_conta, usuarios)
+            
+            if conta:
+                contas.append(conta)
 
-    elif opcao == "nc":
-        numero_conta = len(contas) + 1
-        conta = criar_conta("0001", numero_conta, usuarios)
-        if conta:
-            contas.append(conta)
+        elif opcao == "lc":
+            listar_contas(contas)
 
-    elif opcao == "lc":
-        listar_contas(contas)
+        elif opcao == "q":
+            break
 
-    elif opcao == "q":
-        break
+        else:
+            print("Operação inválida, por favor selecione novamente a operação desejada.")
 
-    else:
-        print("Operação inválida, por favor selecione novamente a operação desejada.")
+main()
