@@ -70,8 +70,17 @@ def criar_usuarios(usuarios):
     usuarios.append ({"nome": nome,"nascimento": nascimento, "cpf": cpf, "endereco": endereco}) # Adiciona o novo usuário à lista de usuários.
     print("Usuário criado com sucesso!")
 
+# Função auxiliar para buscar um usuário pelo CPF.
 
+def filtrar_usuario(cpf, usuarios):
+    # Para cada usuario dentro da lista usuarios, verifique se o usuario["cpf"] é igual ao CPF que recebemos como argumento.
+    # Se for, coloque esse usuário na lista usuarios_filtrados
+    usuarios_filtrados = [usuario for usuario in usuarios if usuario["cpf"] == cpf] # Filtra a lista de usuários para encontrar o CPF informado.
+    return usuarios_filtrados[0] if usuarios_filtrados else None # Retorna o primeiro usuário encontrado ou None se não houver correspondência.
 
+def criar_conta(agencia, numero_conta, usuarios):
+    cpf = input("Informe o CPF do usuário:")
+    usuarios = filtrar_usuario(cpf,)
 
 
 
